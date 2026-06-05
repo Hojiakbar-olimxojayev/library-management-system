@@ -207,7 +207,7 @@ export class AuthService {
 
   async getAccessToken(@Req() req): Promise<ISuccess> {
     let refreshToken = req?.cookies.refreshToken
-    console.log( `adlajdflajdsflka`)
+    
     if (!refreshToken) {
       throw new UnauthorizedException(`Please sign in first`)
     }
@@ -217,7 +217,8 @@ export class AuthService {
     }
 
     let user = await this.userRepo.findOne({
-      where: { id: data?.id }
+      where: { id: data?.id },
+      relations : {role : true}
     })
 
     if (!user) {
