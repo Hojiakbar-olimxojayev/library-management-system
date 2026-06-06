@@ -29,6 +29,7 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors({origin : true, credentials : true})
   await app.listen(envConfig.port, () =>
     console.log(`server is running on port `, envConfig.port),
   );
