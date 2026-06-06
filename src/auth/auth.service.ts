@@ -110,10 +110,11 @@ export class AuthService {
   async signIn(res: Response, singInDto: SigninAuthDto): Promise<ISuccess> {
     const { login, password } = singInDto;
 
-    const user = (await this.userRepo.findOne({
+    const user = await this.userRepo.findOne({
       where: { login },
-      relations: { role: true },
-    })) as User;
+      relations: { role: true }
+    }) as User;
+    
     if (!user) {
       res.clearCookie("refreshToken")
       throw new BadRequestException(`Login or Password is wrong`);
@@ -130,7 +131,7 @@ export class AuthService {
       full_name: user?.full_name,
       role: user?.role,
     };
-
+    
     const aToken = this.Token.getAccessToken(payload);
     const rToken = this.Token.getRefreshToken(res, payload);
 
@@ -207,7 +208,7 @@ export class AuthService {
 
   async getAccessToken(@Req() req): Promise<ISuccess> {
     let refreshToken = req?.cookies.refreshToken
-    
+
     if (!refreshToken) {
       throw new UnauthorizedException(`Please sign in first`)
     }
@@ -218,7 +219,7 @@ export class AuthService {
 
     let user = await this.userRepo.findOne({
       where: { id: data?.id },
-      relations : {role : true}
+      relations: { role: true }
     })
 
     if (!user) {

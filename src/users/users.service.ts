@@ -17,7 +17,7 @@ export class UsersService {
     @InjectRepository(Role) private readonly roleRepe: Repository<Role>,
     @InjectRepository(UserSubscription)
     private readonly userSubRepo: Repository<UserSubscription>,
-  ) {}
+  ) { }
   async create(createUserDto: CreateUserDto, role: number): Promise<ISuccess> {
     const { email, password, login } = createUserDto;
 
@@ -135,12 +135,14 @@ export class UsersService {
         'login',
       );
     }
-    const updatedUser = this.userRepo.update(id, updateUserDto);
+    const updatedUser = await this.userRepo.update(id, {
+      ...updateUserDto
+    });
 
     return {
       statusCode: 200,
       message: 'updated successfully',
-      data: updatedUser,
+      data: {},
     };
   }
 

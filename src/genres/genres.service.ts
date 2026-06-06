@@ -59,11 +59,10 @@ export class GenresService {
     const { name } = updateGenreDto;
 
     if (name) {
-      // await conflicts.mustBeUniqueOnUpdate(id, { name }, this.genreRepo, 'Genre', 'name')
       const exist = (await this.genreRepo.findOne({
         where: { name },
       })) as Genre;
-      console.log(exist);
+      
       if (exist && exist?.id !== id)
         throw new ConflictException(`The Genre with this name already exists`);
 
