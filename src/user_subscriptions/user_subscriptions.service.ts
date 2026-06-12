@@ -145,4 +145,59 @@ export class UserSubscriptionsService {
     }
   }
 
+  async getAllUnSubscriptedUsers(): Promise<ISuccess> {
+    let usersSubscribed = await this.userRepo.find({
+      where: { subscriptions: { is_active: true } },
+      relations: {
+        role: true,
+        subscriptions: true
+      },
+      select: {
+        id: true,
+        email: true,
+        full_name: true,
+        subscriptions: {
+          is_active: true,
+          issued_date: true,
+          end_date: true
+        }
+      }
+    })
+
+    let idOfUsersSubscribed = usersSubscribed.map(u => u.id)
+
+    let usersUnsubscribed: User[] = []
+
+    let users = await this.userRepo.find(
+      {
+        relations: {
+          role: true,
+          subscriptions: true
+        },
+        select: {
+          id: true,
+          email: true,
+          full_name: true,
+          subscriptions: {
+            is_active: true,
+            issued_date: true,
+            end_date: true
+          }
+        }
+      }
+    )
+
+    for (let user of users) {
+      if (!idOfUsersSubscribed.includes(user?.id)) {
+        usersUnsubscribed.push(user)
+      }
+    }
+
+    return {
+      statusCode: 200,
+      message: "All unsubscripted users",
+      data: usersUnsubscribed
+    }
+  }
+
 }
